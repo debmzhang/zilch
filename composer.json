@@ -1,0 +1,12 @@
+{
+    "name": "debmzhang/zilch",
+    "description": "小支付",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "debmzhang",
+            "email": "debmzhang@gmail.com"
+        }
+    ],
+    "require": {}
+}
