@@ -2,7 +2,7 @@
 
 namespace Zilch;
 
-class Base
+abstract class Base
 {
     protected $_mchid;
     protected $_appid;
@@ -18,7 +18,7 @@ class Base
     protected $_debug;
 
     /**
-     * description
+     * init
      */
     public function __construct($config = array())
     {
@@ -35,5 +35,15 @@ class Base
         $this->_returnFormat = isset($config['return_format']) ? $config['return_format'] : '';
         $this->_debug = isset($config['debug']) ? $config['debug'] : 0;
     }
+
+    /**
+     * pay
+     */
+    abstract public function pay($orderid, $total_amount, $payway, $extParams);
+
+    /**
+     * verify
+     */
+    abstract public function verify($data);
 
 }
