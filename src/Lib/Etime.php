@@ -61,7 +61,7 @@ class Etime extends Base
             'pageurl' => 'http://www.zcdtn.com/',
         ];
         $reqData['sign'] = $this->_generateSign($reqData);
-        if ($this->debug) {
+        if ($this->_debug) {
             file_put_contents('/tmp/zlog_for_etime_create_data.log', var_export($reqData, true), FILE_APPEND);
         }
         // 发送请求
@@ -154,7 +154,7 @@ class Etime extends Base
                 $str .= sprintf('%s=%s&', $key, $trimVal);
             }
         }
-        $str .= 'key=' . $this->key;
+        $str .= 'key=' . $this->_appkey;
         if ($this->_debug) {
             file_put_contents('/tmp/zlog_for_etime_str_to_sign.log', date('Y-m-d H:i:s') . '--' . $str . "\n", FILE_APPEND);
         }

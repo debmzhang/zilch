@@ -23,11 +23,11 @@ class Service
         }
         $hashString = $type . http_build_query($config);
         $hash = md5($hashString);
-        if (!isset($_instance[$hash])) {
+        if (!isset($_instances[$hash])) {
             $className = 'Zilch\Lib\\' . ucfirst($type);
-            self::$_instance[$hash] = new $className($config);
+            self::$_instances[$hash] = new $className($config);
         }
-        return self::$_instance[$hash];
+        return self::$_instances[$hash];
     }
 
 }

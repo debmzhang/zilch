@@ -41,13 +41,12 @@ class Huohuotuan extends Base
         $sign = $this->_generateSign($reqData, 'request');
         $requestParams = $this->_generateRequestParams($money, $sign, $orderid, $paytype);
         // 发送请求
+        $reqUrl = $this->_gatewayUrl . '?' . $requestParams;
         $guzzleClient = new Client([
-            'base_uri' => $this->_gatewayUrl,
+            'base_uri' => $reqUrl,
             'timeout'  => 6.0,
         ]);
-        $response = $guzzleClient->request('GET', '', [
-            'body' => $requestParams,
-        ]);
+        $response = $guzzleClient->request('GET');
         if (200 != $response->getStatusCode()) {
             throw new \Exception('网络发生错误：' . $response->getReasonPhrase());
         }
@@ -58,7 +57,7 @@ class Huohuotuan extends Base
                 file_put_contents('/tmp/zlog_for_huohuotuan_create_data_return.log', var_export($resultArr, true), FILE_APPEND);
             }
         }
-        return $result;
+        return $responseBody;
     }
 
     /**
@@ -167,6 +166,15 @@ class Huohuotuan extends Base
     {
         if (Constants::ALIWAP == $payway) {
             return 'aliwap';
+        }
+        if (Constants::ALISCAN == $payway) {
+            return 'aliscan';
+        }
+        if (Constants::WXWAP == $payway) {
+            return 'wxwap';
+        }
+        if (Constants::WXSCAN == $payway) {
+            return 'wxscan';
         }
         return $payway;
     }
