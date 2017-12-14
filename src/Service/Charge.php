@@ -12,12 +12,14 @@ class Charge extends Service
      * @param string $type 支付平台类别
      * @param string $payway 支付方式
      * @param array $config 支付配置
-     * @param array $data 支付传递数据
+     * @param array $data 业务数据
      */
     public function run($type = '', $payway = '', $config = [], $data = [])
     {
-        $instance = $this->getInstance($type, $config);
-        return $instance->pay($data['paymoney'], $data['orderid'], $data['payway']);
+        $instance = self::getInstance($type, $config);
+        $extParams = isset($data['ext_params']) ? $data['ext_params'] : [];
+        // 金额 `paymoney` 单位(分)
+        return $instance->pay($data['paymoney'], $data['orderid'], $payway, $extParams);
     }
 
 }

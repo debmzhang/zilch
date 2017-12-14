@@ -5,26 +5,29 @@
 
 namespace Zilch;
 
-use Zilch\Constants;
-
 class Service
 {
+    // 实例容器
+    private static $_instances = array();
+
     /**
      * description
      *
      * @param string $type 支付平台类别
      * @param array $config 支付配置
      */
-    public function getInstance($type = '', $config = [])
+    public static function getInstance($type = '', $config = [])
     {
-        $instance = null;
-        if (Constants::WIIPAY == $type) {
-            $instance = new \Zilch\Lib\Wiipay($config);
+        if (!$type || !$config) {
+            return null;
         }
-        if (Constants::HUOHUOTUAN == $type) {
-            $instance = new \Zilch\Lib\Huohuotuan($config);
+        $hashString = $type . http_build_query($config);
+        $hash = md5($hashString);
+        if (!isset($_instance[$hash])) {
+            $className = 'Zilch\Lib\\' . ucfirst($type);
+            self::$_instance[$hash] = new $className($config);
         }
-        return $instance;
+        return self::$_instance[$hash];
     }
 
 }

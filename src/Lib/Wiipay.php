@@ -8,6 +8,7 @@
 namespace Zilch\Lib;
 
 use Zilch\Base;
+use Zilch\Constants;
 
 class Wiipay extends Base
 {
@@ -16,10 +17,11 @@ class Wiipay extends Base
      *
      * @param int $money 支付金额(单位/分)
      * @param string $orderid 订单
-     * @param string $payway 支付方式
+     * @param int $payway 支付方式
      */
-    public function pay($money = 0, $orderid = '', $payway = 'ali')
+    public function pay($money = 0, $orderid = '', $payway = 1, $extParams = [])
     {
+        $payway = $this->_getPayway($payway);
         $money = intval($money);
         // 金额单位转换(分 => 元)
         $money = $money / 100;
@@ -93,8 +95,10 @@ class Wiipay extends Base
                 echo 'success';
                 return [
                     'orderid' => $cpparam,
-                    // 单位(分)
+                    // 第三方返回金额为元, 转换为分
                     'paymoney' => $price * 100,
+                    // 第三方平台订单号
+                    'tradeno' => $orderNo,
                 ];
             }
         } else {
@@ -132,6 +136,26 @@ class Wiipay extends Base
             file_put_contents('/tmp/zlog_for_wiipay_generate_sign.log', var_export($debugData, true), FILE_APPEND);
         }
         return $sign;
+    }
+
+    /**
+     * 转换 payway 为该支付平台可识别的字符串
+     */
+    protected function _getPayway($payway = 0)
+    {
+        if (Constants::ALIWAP == $payway) {
+            return 'ali';
+        }
+        if (Constants::WXWAP == $payway) {
+            return 'wx';
+        }
+        if (Constants::QQWAP == $payway) {
+            return 'qq';
+        }
+        if (Constants::UNIONPAY == $payway) {
+            return 'un';
+        }
+        return 'default';
     }
 
 }

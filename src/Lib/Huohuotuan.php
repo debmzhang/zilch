@@ -8,6 +8,8 @@
 namespace Zilch\Lib;
 
 use Zilch\Base;
+use Zilch\Constants;
+use GuzzleHttp\Client;
 
 class Huohuotuan extends Base
 {
@@ -16,10 +18,11 @@ class Huohuotuan extends Base
      *
      * @param int $money 支付金额(单位/分)
      * @param string $orderid 订单
-     * @param string $payway 支付方式
+     * @param int $payway 支付方式
      */
-    public function pay($money = 0, $orderid = '', $payway = 'aliwap')
+    public function pay($money = 0, $orderid = '', $payway = 1, $extParams = [])
     {
+        $payway = $this->_getPayway($payway);
         $money = intval($money);
         // 金额单位（分）
         $paytypeConf = [
@@ -37,8 +40,19 @@ class Huohuotuan extends Base
         ];
         $sign = $this->_generateSign($reqData, 'request');
         $requestParams = $this->_generateRequestParams($money, $sign, $orderid, $paytype);
-        $result = $this->_httpGet($this->_gatewayUrl, $requestParams);
-        $resultArr = json_decode($result, true);
+        // 发送请求
+        $guzzleClient = new Client([
+            'base_uri' => $this->_gatewayUrl,
+            'timeout'  => 6.0,
+        ]);
+        $response = $guzzleClient->request('GET', '', [
+            'body' => $requestParams,
+        ]);
+        if (200 != $response->getStatusCode()) {
+            throw new \Exception('网络发生错误：' . $response->getReasonPhrase());
+        }
+        $responseBody = $response->getBody()->getContents();
+        $resultArr = json_decode($responseBody, true);
         if (is_array($resultArr)) {
             if ($this->_debug) {
                 file_put_contents('/tmp/zlog_for_huohuotuan_create_data_return.log', var_export($resultArr, true), FILE_APPEND);
@@ -84,6 +98,8 @@ class Huohuotuan extends Base
                         'orderid' => $data['order_id'],
                         // 单位(分)
                         'paymoney' => $data['money'],
+                        // 第三方平台订单号
+                        'tradeno' => $data['orderNo'],
                     ];
                 }
             }
@@ -145,20 +161,14 @@ class Huohuotuan extends Base
     }
 
     /**
-     * _httpGet
+     * 转换 payway 为该支付平台可识别的字符串
      */
-    protected function _httpGet($url, $params)
+    protected function _getPayway($payway = 0)
     {
-        $url = $url . "?" . $params;
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_HEADER, 0);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 6);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-        $output = curl_exec($ch);
-        curl_close($ch);
-        return $output;
+        if (Constants::ALIWAP == $payway) {
+            return 'aliwap';
+        }
+        return $payway;
     }
 
 }
