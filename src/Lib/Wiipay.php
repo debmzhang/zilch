@@ -52,7 +52,10 @@ class Wiipay extends Base
             'sign' => $sign,
             'debug' => $this->_debug,
         ];
-        return $reqParams;
+        return [
+            'code' => 0,
+            'data' => $reqParams,
+        ];
     }
 
     /**

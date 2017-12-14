@@ -16,11 +16,11 @@ class Etime extends Base
     /**
      * pay
      *
-     * @param string $orderid 商户订单号
      * @param string $total_amount 支付总金额 (单位/分)
+     * @param string $orderid 商户订单号
      * @param int $payway 支付类型
      */
-    public function pay($orderid = '', $total_amount = 0, $payway = 1, $extParams = [])
+    public function pay($total_amount = 0, $orderid = '', $payway = 1, $extParams = [])
     {
         // 金额格式, 必须有小数点, 且小数点后面保留两位
         $total_amount = $total_amount / 100;
@@ -84,13 +84,21 @@ class Etime extends Base
             if ($this->_debug) {
                 file_put_contents('/tmp/zlog_for_etime_create_data_return.log', var_export($resultArr, true), FILE_APPEND);
             }
-            if (0 == $resultArr['result_code'] && 0 == $resultArr['status']) {
-                if (isset($resultArr['code_url'])) {
-                    return $resultArr['code_url'];
+            if (isset($resultArr['result_code']) && isset($resultArr['status'])) {
+                if (0 == $resultArr['result_code'] && 0 == $resultArr['status']) {
+                    if (isset($resultArr['code_url'])) {
+                        return [
+                            'code' => 0,
+                            'data' => $resultArr['code_url'],
+                        ];
+                    }
                 }
             }
         }
-        return false;
+        return [
+            'code' => 1,
+            'msg' => $resultArr['message'],
+        ];
     }
 
     /**

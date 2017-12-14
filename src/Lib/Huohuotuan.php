@@ -57,7 +57,10 @@ class Huohuotuan extends Base
                 file_put_contents('/tmp/zlog_for_huohuotuan_create_data_return.log', var_export($resultArr, true), FILE_APPEND);
             }
         }
-        return $responseBody;
+        return [
+            'code' => 0,
+            'data' => $responseBody,
+        ];
     }
 
     /**

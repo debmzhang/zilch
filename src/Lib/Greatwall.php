@@ -69,13 +69,19 @@ class Greatwall extends Base
             if ($this->_debug) {
                 file_put_contents('/tmp/zlog_for_gwpay_create_data_return.log', var_export($resultArr, true), FILE_APPEND);
             }
-            if (00 == $resultArr['respCode']) {
-                return $resultArr['barCode'];
-            } else {
-                return $resultArr['message'];
+            if (isset($resultArr['respCode'])) {
+                if (00 == $resultArr['respCode']) {
+                    return [
+                        'code' => 0,
+                        'data' => $resultArr['barCode'],
+                    ];
+                }
             }
         }
-        return false;
+        return [
+            'code' => 1,
+            'msg' => $resultArr['message'],
+        ];
     }
 
     /**
