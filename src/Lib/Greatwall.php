@@ -109,7 +109,13 @@ class Greatwall extends Base
                 }
                 if ($sign == $mySign) {
                     echo 'success';
-                    return true;
+                    return [
+                        'orderid' => $data['traceno'],
+                        // 第三方返回金额为元, 转换为分
+                        'paymoney' => $data['amount'] * 100,
+                        // 第三方平台订单号
+                        'tradeno' => $data['orderno'],
+                    ];
                 }
             }
         }
