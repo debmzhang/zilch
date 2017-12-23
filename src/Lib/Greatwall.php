@@ -16,12 +16,12 @@ class Greatwall extends Base
     /**
      * pay
      *
-     * @param string $orderid 商户订单号
      * @param string $total_amount 支付总金额 (单位/分)
+     * @param string $orderid 商户订单号
      * @param string $payway 支付途径
      * @param string $paymethod 支付方式 `wap` or `scan`
      */
-    public function pay($orderid = '', $total_amount = 0, $payway = 1, $extParams = [])
+    public function pay($total_amount = 0, $orderid = '', $payway = '', $extParams = [])
     {
         $paymethod = isset($extParams['paymethod']) ? $extParams['paymethod'] : 'wap';
         $payUrlConfig = array(
@@ -56,8 +56,10 @@ class Greatwall extends Base
             'base_uri' => $gatewayUrl,
             'timeout'  => 6.0,
         ]);
+        // 请求表单数据
+        parse_str($reqStr, $postData);
         $response = $guzzleClient->request('POST', '', [
-            'body' => $reqStr,
+            'form_params' => $postData,
         ]);
         if (200 != $response->getStatusCode()) {
             throw new \Exception('网络发生错误：' . $response->getReasonPhrase());
@@ -179,22 +181,24 @@ class Greatwall extends Base
     /**
      * 转换 payway 为该支付平台可识别的字符串
      */
-    protected function _getPayway($payway = 0)
+    protected function _getPayway($payway = '')
     {
+        // 支付平台已处理过 payway 标识, 可直接返回;
+        return $payway;
         if (Constants::ALIWAP == $payway) {
             return 1;
         }
         if (Constants::WXWAP == $payway) {
             return 2;
         }
+        if (Constants::BDWAP == $payway) {
+            return 3;
+        }
         if (Constants::QQWAP == $payway) {
             return 4;
         }
-        if (Constants::BAIDU == $payway) {
-            return 10;
-        }
-        if (Constants::JDPAY == $payway) {
-            return 11;
+        if (Constants::JDWAP == $payway) {
+            return 5;
         }
         return $payway;
     }

@@ -17,9 +17,9 @@ class Wiipay extends Base
      *
      * @param int $money 支付金额(单位/分)
      * @param string $orderid 订单
-     * @param int $payway 支付方式
+     * @param string $payway 支付方式
      */
-    public function pay($money = 0, $orderid = '', $payway = 1, $extParams = [])
+    public function pay($money = 0, $orderid = '', $payway = '', $extParams = [])
     {
         $payway = $this->_getPayway($payway);
         $money = intval($money);
@@ -144,8 +144,10 @@ class Wiipay extends Base
     /**
      * 转换 payway 为该支付平台可识别的字符串
      */
-    protected function _getPayway($payway = 0)
+    protected function _getPayway($payway = '')
     {
+        // 支付平台已处理过 payway 标识, 可直接返回;
+        return $payway;
         if (Constants::ALIWAP == $payway) {
             return 'ali';
         }

@@ -18,21 +18,13 @@ class Huohuotuan extends Base
      *
      * @param int $money 支付金额(单位/分)
      * @param string $orderid 订单
-     * @param int $payway 支付方式
+     * @param string $payway 支付方式
      */
-    public function pay($money = 0, $orderid = '', $payway = 1, $extParams = [])
+    public function pay($money = 0, $orderid = '', $payway = '', $extParams = [])
     {
-        $payway = $this->_getPayway($payway);
-        $money = intval($money);
+        $paytype = $this->_getPayway($payway);
         // 金额单位（分）
-        $paytypeConf = [
-            'wxwap' => 'wxwap',
-            'wxscan' => 'wxqrcode',
-            'wxh5' => 'wxhtml',
-            'aliwap' => 'aliwap',
-            'aliscan' => 'aliqrcode',
-        ];
-        $paytype = isset($paytypeConf[$payway]) ? $paytypeConf[$payway] : $payway;
+        $money = intval($money);
         $reqData = [
             'orderid' => $orderid,
             'paymoney' => $money,
@@ -165,19 +157,21 @@ class Huohuotuan extends Base
     /**
      * 转换 payway 为该支付平台可识别的字符串
      */
-    protected function _getPayway($payway = 0)
+    protected function _getPayway($payway = '')
     {
+        // 支付平台已处理过 payway 标识, 可直接返回;
+        return $payway;
         if (Constants::ALIWAP == $payway) {
             return 'aliwap';
         }
         if (Constants::ALISCAN == $payway) {
-            return 'aliscan';
+            return 'aliqrcode';
         }
         if (Constants::WXWAP == $payway) {
             return 'wxwap';
         }
         if (Constants::WXSCAN == $payway) {
-            return 'wxscan';
+            return 'wxqrcode';
         }
         return $payway;
     }

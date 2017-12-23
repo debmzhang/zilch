@@ -12,6 +12,7 @@ class Constants
     const HUOHUOTUAN = 'huohuotuan';
     const ETIME = 'etime';
     const GREATWALL = 'greatwall';
+    const YUN70 = 'yun70';
     // 支付通道
     const ALIWAP = 1;
     const ALISCAN = 2;
@@ -21,6 +22,9 @@ class Constants
     const WXAPP = 7;
     const QQWAP = 8;
     const UNIONPAY = 9;
-    const BAIDU = 10;
-    const JDPAY = 11;
+    const BDSCAN = 10;
+    const JDSCAN = 11;
+    const QQSCAN = 12;
+    const BDWAP = 13;
+    const JDWAP = 14;
 }

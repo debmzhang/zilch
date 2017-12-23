@@ -18,9 +18,9 @@ class Etime extends Base
      *
      * @param string $total_amount 支付总金额 (单位/分)
      * @param string $orderid 商户订单号
-     * @param int $payway 支付类型
+     * @param string $payway 支付类型
      */
-    public function pay($total_amount = 0, $orderid = '', $payway = 1, $extParams = [])
+    public function pay($total_amount = 0, $orderid = '', $payway = '', $extParams = [])
     {
         // 金额格式, 必须有小数点, 且小数点后面保留两位
         $total_amount = $total_amount / 100;
@@ -180,8 +180,10 @@ class Etime extends Base
     /**
      * 转换 payway 为该支付平台可识别的字符串
      */
-    protected function _getPayway($payway = 0)
+    protected function _getPayway($payway = '')
     {
+        // 支付平台已处理过 payway 标识, 可直接返回;
+        return $payway;
         if (Constants::ALIWAP == $payway) {
             return 'HFAliPayH5';
         }
