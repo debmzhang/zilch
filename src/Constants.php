@@ -13,6 +13,7 @@ class Constants
     const ETIME = 'etime';
     const GREATWALL = 'greatwall';
     const YUN70 = 'yun70';
+    const QIANYIFU = 'qianyifu';
     // 支付通道
     const ALIWAP = 1;
     const ALISCAN = 2;
